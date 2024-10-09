@@ -1,7 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr-ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu des seaux d'eau</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+            padding: 20px;
+        }
+        .buckets {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 400px;
+            margin-bottom: 40px;
+        }
+        .bucket {
+            width: 150px;
+            border: 4px solid #000;
+            margin: 0 20px;
+            position: relative;
+            overflow: hidden;
+            background-color: #e0f7fa;
+        }
+        .water {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #4fc3f7;
+            transition: height 0.5s ease;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e1f5fe;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .control-group h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4fc3f7;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #29b6f6;
+        }
+        .bucket-label {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
 <body>
-<h1>Hello Woolldd</h1>
-<p>I'm hosted with GitHub Pages.</p>
+    <div class="header">
+        <h1>Visualisation des transferts de pile</h1>
+        <br>
+    </div>
+    <div class="buckets">
+        <div>
+            <div id="bucketA" class="bucket" style="height: 360px;">
+                <div class="water" id="waterA"></div>
+            </div>
+            <div class="bucket-label">X: <span id="levelA">100</span>/100</div>
+        </div>
+        <div>
+            <div id="bucketB" class="bucket" style="height: 216px;">
+                <div class="water" id="waterB"></div>
+            </div>
+            <div class="bucket-label">Y: <span id="levelB">0</span>/29</div>
+        </div>
+        <div>
+            <div id="bucketC" class="bucket" style="height: 108px;">
+                <div class="water" id="waterC"></div>
+            </div>
+            <div class="bucket-label">Z: <span id="levelC">0</span>/13</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <h3>Seau X</h3>
+            <button onclick="transfer('A', 'B')">X → Y</button>
+            <button onclick="transfer('A', 'C')">X → Z</button>
+        </div>
+        <div class="control-group">
+            <h3>Seau Y</h3>
+            <button onclick="transfer('B', 'A')">X → Y</button>
+            <button onclick="transfer('B', 'C')">Y → Z</button>
+        </div>
+        <div class="control-group">
+            <h3>Seau Z</h3>
+            <button onclick="transfer('C', 'A')">Z → X</button>
+            <button onclick="transfer('C', 'B')">Z → Y</button>
+        </div>
+    </div>
+
+    <div class="footer">
+    <h3>Dans le cadre du devoir 1 de IFT 2810. Par Louis-Philippe Kyer.</h3>
+    </div>
+
+    <script>
+        const capacities = { A: 100, B: 29, C: 13 };
+        const currentLevels = { A: 100, B: 0, C: 0 };
+
+        function updateWaterDisplay() {
+            for (let bucket in currentLevels) {
+                const waterElement = document.getElementById(`water${bucket}`);
+                const levelElement = document.getElementById(`level${bucket}`);
+                const percentage = (currentLevels[bucket] / capacities[bucket]) * 100;
+                waterElement.style.height = `${percentage}%`;
+                levelElement.textContent = currentLevels[bucket];
+            }
+        }
+
+        updateWaterDisplay();
+
+        function transfer(from, to) {
+            console.log(from + " -> " + to)
+            if (currentLevels[from] === 0) return; // Pas d'eau à transférer
+            const availableSpace = capacities[to] - currentLevels[to];
+            const amountToTransfer = Math.min(currentLevels[from], availableSpace);
+
+            currentLevels[from] -= amountToTransfer;
+            currentLevels[to] += amountToTransfer;
+            updateWaterDisplay();
+        }
+    </script>
 </body>
 </html>
